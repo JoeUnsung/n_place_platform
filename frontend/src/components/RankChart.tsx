@@ -1,0 +1,61 @@
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
+import type { RankingSnapshot } from '@/types';
+
+interface RankChartProps {
+  data: RankingSnapshot[];
+}
+
+export function RankChart({ data }: RankChartProps) {
+  const sorted = [...data].sort(
+    (a, b) => new Date(a.collected_at).getTime() - new Date(b.collected_at).getTime(),
+  );
+
+  const chartData = sorted
+    .filter((d) => d.rank_position !== null)
+    .map((d) => ({
+      date: new Date(d.collected_at).toLocaleDateString('ko-KR', {
+        month: 'short',
+        day: 'numeric',
+      }),
+      rank: d.rank_position,
+      collected_at: d.collected_at,
+    }));
+
+  if (chartData.length === 0) {
+    return (
+      <div className="flex h-64 items-center justify-center text-muted-foreground">
+        표시할 데이터가 없습니다.
+      </div>
+    );
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={chartData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" fontSize={12} />
+        <YAxis reversed domain={['auto', 'auto']} fontSize={12} label={{ value: '순위', angle: -90, position: 'insideLeft' }} />
+        <Tooltip
+          formatter={(value) => [`${value}위`, '순위']}
+          labelFormatter={(label) => String(label)}
+        />
+        <Line
+          type="monotone"
+          dataKey="rank"
+          stroke="hsl(var(--primary))"
+          strokeWidth={2}
+          dot={{ r: 3 }}
+          activeDot={{ r: 5 }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+}
