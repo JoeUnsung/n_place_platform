@@ -35,6 +35,9 @@ class DashboardKeyword(BaseModel):
     latest_rank: int | None = None
     prev_rank: int | None = None
     rank_change: int | None = None
+    latest_visitor_count: int | None = None
+    latest_blog_review_count: int | None = None
+    latest_collected_at: str | None = None
 
 
 class DashboardStore(BaseModel):

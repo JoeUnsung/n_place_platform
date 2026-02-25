@@ -34,6 +34,9 @@ export interface DashboardKeyword extends TrackedKeyword {
   latest_rank: number | null;
   prev_rank: number | null;
   rank_change: number | null;
+  latest_visitor_count: number | null;
+  latest_blog_review_count: number | null;
+  latest_collected_at: string | null;
 }
 
 export interface DashboardStore extends Store {

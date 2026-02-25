@@ -6,53 +6,72 @@ interface RankBadgeProps {
   size?: 'sm' | 'lg';
 }
 
-function getRankColor(rank: number | null) {
-  if (rank === null) return 'text-muted-foreground';
-  if (rank <= 3) return 'text-amber-500';
-  if (rank <= 10) return 'text-emerald-600';
-  return 'text-foreground';
+function getRankStyles(rank: number): { bg: string; text: string; ring: string } {
+  if (rank === 1) return { bg: 'bg-amber-400', text: 'text-white', ring: 'ring-amber-200' };
+  if (rank === 2) return { bg: 'bg-slate-400', text: 'text-white', ring: 'ring-slate-200' };
+  if (rank === 3) return { bg: 'bg-orange-400', text: 'text-white', ring: 'ring-orange-200' };
+  if (rank <= 10) return { bg: 'bg-indigo-500', text: 'text-white', ring: 'ring-indigo-200' };
+  if (rank <= 30) return { bg: 'bg-slate-100', text: 'text-slate-700', ring: 'ring-slate-100' };
+  return { bg: 'bg-slate-50', text: 'text-slate-500', ring: 'ring-slate-50' };
 }
 
 export function RankBadge({ rank, change, size = 'sm' }: RankBadgeProps) {
   if (rank === null) {
     return (
-      <span className="text-sm text-muted-foreground">-</span>
+      <div className={cn(
+        'flex items-center justify-center rounded-full bg-muted',
+        size === 'lg' ? 'h-14 w-14' : 'h-9 w-9',
+      )}>
+        <span className="text-xs text-muted-foreground">N/A</span>
+      </div>
     );
   }
 
+  const styles = getRankStyles(rank);
+
   return (
-    <div className="flex items-center gap-2">
-      <span className={cn(
-        'font-bold tabular-nums',
-        getRankColor(rank),
-        size === 'lg' ? 'text-3xl' : 'text-lg',
+    <div className="flex items-center gap-2.5">
+      <div className={cn(
+        'flex items-center justify-center rounded-full font-bold tabular-nums ring-2',
+        styles.bg, styles.text, styles.ring,
+        size === 'lg' ? 'h-14 w-14 text-xl' : 'h-9 w-9 text-sm',
       )}>
-        {rank}<span className={cn(size === 'lg' ? 'text-lg' : 'text-xs', 'font-medium')}>위</span>
-      </span>
-      {change !== null && change !== 0 && (
+        {rank}
+      </div>
+      <div className="flex flex-col items-start">
         <span className={cn(
-          'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold',
-          change < 0
-            ? 'bg-emerald-50 text-emerald-600'
-            : 'bg-red-50 text-red-500',
+          'font-medium text-muted-foreground',
+          size === 'lg' ? 'text-xs' : 'text-[10px]',
         )}>
-          {change < 0 ? (
-            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-            </svg>
-          ) : (
-            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-          )}
-          {Math.abs(change)}
+          {rank}위
         </span>
-      )}
-      {change === 0 && (
-        <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-          -
-        </span>
-      )}
+        {change !== null && change !== 0 && (
+          <span className={cn(
+            'inline-flex items-center gap-0.5 font-semibold',
+            size === 'lg' ? 'text-xs' : 'text-[10px]',
+            change < 0 ? 'text-emerald-600' : 'text-red-500',
+          )}>
+            {change < 0 ? (
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
+            ) : (
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+            {Math.abs(change)}
+          </span>
+        )}
+        {change === 0 && (
+          <span className={cn(
+            'text-muted-foreground',
+            size === 'lg' ? 'text-xs' : 'text-[10px]',
+          )}>
+            --
+          </span>
+        )}
+      </div>
     </div>
   );
 }

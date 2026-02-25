@@ -70,7 +70,7 @@ async def get_all_dashboard(db: Client) -> list[DashboardStore]:
         for kw in kw_result.data:
             snapshots = (
                 db.table("ranking_snapshots")
-                .select("rank_position")
+                .select("rank_position,visitor_count,blog_review_count,collected_at")
                 .eq("tracked_keyword_id", kw["id"])
                 .order("collected_at", desc=True)
                 .limit(2)
@@ -80,9 +80,16 @@ async def get_all_dashboard(db: Client) -> list[DashboardStore]:
             latest_rank: int | None = None
             prev_rank: int | None = None
             rank_change: int | None = None
+            latest_visitor_count: int | None = None
+            latest_blog_review_count: int | None = None
+            latest_collected_at: str | None = None
 
             if snapshots.data:
-                latest_rank = snapshots.data[0].get("rank_position")
+                latest_snap = snapshots.data[0]
+                latest_rank = latest_snap.get("rank_position")
+                latest_visitor_count = latest_snap.get("visitor_count")
+                latest_blog_review_count = latest_snap.get("blog_review_count")
+                latest_collected_at = latest_snap.get("collected_at")
                 if len(snapshots.data) > 1:
                     prev_rank = snapshots.data[1].get("rank_position")
                 if latest_rank is not None and prev_rank is not None:
@@ -101,6 +108,9 @@ async def get_all_dashboard(db: Client) -> list[DashboardStore]:
                     latest_rank=latest_rank,
                     prev_rank=prev_rank,
                     rank_change=rank_change,
+                    latest_visitor_count=latest_visitor_count,
+                    latest_blog_review_count=latest_blog_review_count,
+                    latest_collected_at=latest_collected_at,
                 )
             )
 

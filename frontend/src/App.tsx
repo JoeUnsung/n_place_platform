@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { StoreRegisterPage } from '@/pages/StoreRegisterPage';
@@ -11,6 +11,7 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/keywords" element={<Navigate to="/" replace />} />
           <Route path="/stores/register" element={<StoreRegisterPage />} />
           <Route path="/stores/:storeId/keywords" element={<KeywordSetupPage />} />
           <Route path="/keywords/:keywordId/history" element={<RankHistoryPage />} />
